@@ -30,11 +30,42 @@ func (lex *Lexer) NextToken() Token {
 	case '&':
 		token.typ = AMPERSAND
 		token.value = "&"
+	case '|':
+		token.typ = PIPE
+		token.value = "|"
+	case '>':
+		if lex.nextCharIs('>') {
+			token.typ = GREATGREATER
+			token.value = ">>"
+
+			lex.readChar()
+		} else if lex.nextCharIs('&') {
+			token.typ = GREATAMPERSAND
+			token.value = ">&"
+
+			lex.readChar()
+		} else {
+			token.typ = GREAT
+			token.value = ">"
+		}
+	case '<':
+		token.typ = LESS
+		token.value = "<"
 	default:
 		return Token{}
 	}
 
+	lex.readChar()
+
 	return token
+}
+
+func (lex *Lexer) nextCharIs(chr byte) bool {
+	if lex.nextCharPos >= len(lex.input) {
+		return false
+	}
+
+	return lex.input[lex.nextCharPos] == chr
 }
 
 func (lex *Lexer) readChar() {

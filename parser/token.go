@@ -5,9 +5,11 @@ type TokenType byte
 const (
 	PIPE TokenType = iota
 	AMPERSAND
-	GREATER
-	GREATERGREATER
+	GREAT
+	GREATGREATER
 	IDENTIFIER
+	LESS
+	GREATAMPERSAND
 )
 
 type Token struct {
