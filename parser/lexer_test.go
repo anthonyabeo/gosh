@@ -1,12 +1,11 @@
 package parser
 
 import (
-	// "fmt"
 	"testing"
 )
 
 func TestTokens(t *testing.T) {
-	input := "& | > >> < >& "
+	input := "& | > >> < >& \n"
 	tests := []Token{
 		{value: "&", typ: AMPERSAND},
 		{value: "|", typ: PIPE},
@@ -14,6 +13,7 @@ func TestTokens(t *testing.T) {
 		{value: ">>", typ: GREATGREATER},
 		{value: "<", typ: LESS},
 		{value: ">&", typ: GREATAMPERSAND},
+		{value: "\n", typ: NEWLINE},
 	}
 
 	lexer := NewLexer(input)
@@ -21,7 +21,6 @@ func TestTokens(t *testing.T) {
 	for _, tok := range tests {
 		token := lexer.NextToken()
 
-		// fmt.Println("CUR CHAR: ", lexer.curChar)
 		if token.value != tok.value {
 			t.Errorf("Token has wrong value. Got=%s, Expected=%s",
 				token.value, tok.value)

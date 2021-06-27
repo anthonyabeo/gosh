@@ -51,6 +51,9 @@ func (lex *Lexer) NextToken() Token {
 	case '<':
 		token.typ = LESS
 		token.value = "<"
+	case '\n':
+		token.typ = NEWLINE
+		token.value = "\n"
 	default:
 		return Token{}
 	}
@@ -80,7 +83,7 @@ func (lex *Lexer) readChar() {
 }
 
 func (lex *Lexer) skipWhiteSpace() {
-	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\n' || lex.curChar == '\r' {
+	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\r' {
 		lex.readChar()
 	}
 }

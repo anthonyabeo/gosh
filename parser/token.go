@@ -10,6 +10,7 @@ const (
 	IDENTIFIER
 	LESS
 	GREATAMPERSAND
+	NEWLINE
 )
 
 type Token struct {
