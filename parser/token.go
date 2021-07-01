@@ -12,6 +12,7 @@ const (
 	GREATAMPERSAND
 	NEWLINE
 	OPTION
+	ILLEGAL
 )
 
 type Token struct {

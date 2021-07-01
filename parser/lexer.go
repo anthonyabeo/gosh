@@ -61,6 +61,8 @@ func (lex *Lexer) NextToken() Token {
 		if lex.curCharIsLetter() {
 			token.typ = IDENTIFIER
 			token.value = lex.readIdentifier()
+		} else {
+			return Token{typ: ILLEGAL}
 		}
 	}
 
