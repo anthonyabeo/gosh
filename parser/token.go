@@ -11,6 +11,7 @@ const (
 	LESS
 	GREATAMPERSAND
 	NEWLINE
+	OPTION
 )
 
 type Token struct {
