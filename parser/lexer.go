@@ -54,6 +54,9 @@ func (lex *Lexer) NextToken() Token {
 	case '\n':
 		token.typ = NEWLINE
 		token.value = "\n"
+	case '-':
+		token.typ = OPTION
+		token.value = lex.readIdentifier()
 	default:
 		return Token{}
 	}
@@ -86,4 +89,20 @@ func (lex *Lexer) skipWhiteSpace() {
 	for lex.curChar == ' ' || lex.curChar == '\t' || lex.curChar == '\r' {
 		lex.readChar()
 	}
+}
+
+func (lex *Lexer) readIdentifier() string {
+	pos := lex.curCharPos
+	for lex.isLetter(lex.curChar) {
+		lex.readChar()
+	}
+
+	return lex.input[pos:lex.curCharPos]
+}
+
+func (lex *Lexer) isLetter(curChar byte) bool {
+	return ('a' <= curChar && curChar <= 'z') ||
+		('A' <= curChar && curChar <= 'Z') ||
+		curChar == '_' ||
+		curChar == '-'
 }
