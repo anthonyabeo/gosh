@@ -5,7 +5,7 @@ import (
 )
 
 func TestTokens(t *testing.T) {
-	input := "& | > >> < >& \n"
+	input := "& | > >> < >& \n -a"
 	tests := []Token{
 		{value: "&", typ: AMPERSAND},
 		{value: "|", typ: PIPE},
@@ -14,6 +14,7 @@ func TestTokens(t *testing.T) {
 		{value: "<", typ: LESS},
 		{value: ">&", typ: GREATAMPERSAND},
 		{value: "\n", typ: NEWLINE},
+		{value: "-a", typ: OPTION},
 	}
 
 	lexer := NewLexer(input)
