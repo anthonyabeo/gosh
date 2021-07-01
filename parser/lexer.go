@@ -58,7 +58,10 @@ func (lex *Lexer) NextToken() Token {
 		token.typ = OPTION
 		token.value = lex.readIdentifier()
 	default:
-		return Token{}
+		if lex.curCharIsLetter() {
+			token.typ = IDENTIFIER
+			token.value = lex.readIdentifier()
+		}
 	}
 
 	lex.readChar()
