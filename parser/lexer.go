@@ -93,16 +93,16 @@ func (lex *Lexer) skipWhiteSpace() {
 
 func (lex *Lexer) readIdentifier() string {
 	pos := lex.curCharPos
-	for lex.isLetter(lex.curChar) {
+	for lex.curCharIsLetter() {
 		lex.readChar()
 	}
 
 	return lex.input[pos:lex.curCharPos]
 }
 
-func (lex *Lexer) isLetter(curChar byte) bool {
-	return ('a' <= curChar && curChar <= 'z') ||
-		('A' <= curChar && curChar <= 'Z') ||
-		curChar == '_' ||
-		curChar == '-'
+func (lex *Lexer) curCharIsLetter() bool {
+	return ('a' <= lex.curChar && lex.curChar <= 'z') ||
+		('A' <= lex.curChar && lex.curChar <= 'Z') ||
+		lex.curChar == '_' ||
+		lex.curChar == '-'
 }
