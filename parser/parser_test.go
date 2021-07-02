@@ -3,10 +3,11 @@ package parser
 import "testing"
 
 func TestParser(t *testing.T) {
-	input := "ls -al | grep foo > outfile"
+	input := "ls -al a* | grep foo > outfile"
 	tests := []Token{
 		{value: "ls", typ: IDENTIFIER},
 		{value: "-al", typ: OPTION},
+		{value: "a*", typ: IDENTIFIER},
 		{value: "|", typ: PIPE},
 		{value: "grep", typ: IDENTIFIER},
 		{value: "foo", typ: IDENTIFIER},
