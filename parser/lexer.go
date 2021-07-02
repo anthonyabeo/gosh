@@ -109,5 +109,6 @@ func (lex *Lexer) curCharIsLetter() bool {
 	return ('a' <= lex.curChar && lex.curChar <= 'z') ||
 		('A' <= lex.curChar && lex.curChar <= 'Z') ||
 		lex.curChar == '_' ||
-		lex.curChar == '-'
+		lex.curChar == '-' ||
+		lex.curChar == '*'
 }
