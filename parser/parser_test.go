@@ -1,6 +1,8 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestParser(t *testing.T) {
 	input := "ls -al a* | grep foo > outfile"
@@ -27,5 +29,31 @@ func TestParser(t *testing.T) {
 		}
 
 		parser.NextToken()
+	}
+}
+
+func TestParseCmd(t *testing.T) {
+	input := "ls -al foo"
+	p := NewParser(input)
+	cmd, err := p.parseCmd()
+
+	if err != nil {
+		t.Errorf("Cmd parse failed. Expected err to be nil.")
+	}
+
+	if cmd.Path != "ls" {
+		t.Errorf("Wrong command path. Got=%v, Expected=ls", cmd.Path)
+	}
+
+	if len(cmd.Args) != 2 {
+		t.Errorf("Wrong number of arguments and options. Got=%v, Expected=2", len(cmd.Args))
+	}
+
+	if cmd.Args[0] != "-al" {
+		t.Errorf("Wrong first option. Got=%v, Expected=-al", cmd.Args[0])
+	}
+
+	if cmd.Args[1] != "foo" {
+		t.Errorf("Wrong second option. Got=%v, Expected=foo", cmd.Args[1])
 	}
 }
