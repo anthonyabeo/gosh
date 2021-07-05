@@ -28,41 +28,41 @@ func (lex *Lexer) NextToken() Token {
 
 	switch lex.curChar {
 	case '&':
-		token.typ = AMPERSAND
-		token.value = "&"
+		token.Typ = AMPERSAND
+		token.Value = "&"
 	case '|':
-		token.typ = PIPE
-		token.value = "|"
+		token.Typ = PIPE
+		token.Value = "|"
 	case '>':
 		if lex.nextCharIs('>') {
-			token.typ = GREATGREATER
-			token.value = ">>"
+			token.Typ = GREATGREATER
+			token.Value = ">>"
 
 			lex.readChar()
 		} else if lex.nextCharIs('&') {
-			token.typ = GREATAMPERSAND
-			token.value = ">&"
+			token.Typ = GREATAMPERSAND
+			token.Value = ">&"
 
 			lex.readChar()
 		} else {
-			token.typ = GREAT
-			token.value = ">"
+			token.Typ = GREAT
+			token.Value = ">"
 		}
 	case '<':
-		token.typ = LESS
-		token.value = "<"
+		token.Typ = LESS
+		token.Value = "<"
 	case '\n':
-		token.typ = NEWLINE
-		token.value = "\n"
+		token.Typ = NEWLINE
+		token.Value = "\n"
 	case '-':
-		token.typ = OPTION
-		token.value = lex.readIdentifier()
+		token.Typ = OPTION
+		token.Value = lex.readIdentifier()
 	default:
 		if lex.curCharIsLetter() {
-			token.typ = IDENTIFIER
-			token.value = lex.readIdentifier()
+			token.Typ = IDENTIFIER
+			token.Value = lex.readIdentifier()
 		} else {
-			return Token{typ: ILLEGAL}
+			return Token{Typ: EOF}
 		}
 	}
 

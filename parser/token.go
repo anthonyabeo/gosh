@@ -13,21 +13,22 @@ const (
 	NEWLINE
 	OPTION
 	ILLEGAL
+	EOF
 )
 
 type Token struct {
-	value              string
-	typ                TokenType
-	filepath           string
-	lineNum, columnNum uint32
+	Value              string
+	Typ                TokenType
+	Filepath           string
+	LineNum, ColumnNum uint32
 }
 
 func NewToken(value string, typ TokenType) Token {
 	return Token{
-		value:     value,
-		typ:       typ,
-		filepath:  "",
-		lineNum:   0,
-		columnNum: 0,
+		Value:     value,
+		Typ:       typ,
+		Filepath:  "",
+		LineNum:   0,
+		ColumnNum: 0,
 	}
 }

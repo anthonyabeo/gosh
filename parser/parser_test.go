@@ -5,25 +5,25 @@ import "testing"
 func TestParser(t *testing.T) {
 	input := "ls -al a* | grep foo > outfile"
 	tests := []Token{
-		{value: "ls", typ: IDENTIFIER},
-		{value: "-al", typ: OPTION},
-		{value: "a*", typ: IDENTIFIER},
-		{value: "|", typ: PIPE},
-		{value: "grep", typ: IDENTIFIER},
-		{value: "foo", typ: IDENTIFIER},
-		{value: ">", typ: GREAT},
-		{value: "outfile", typ: IDENTIFIER},
+		{Value: "ls", Typ: IDENTIFIER},
+		{Value: "-al", Typ: OPTION},
+		{Value: "a*", Typ: IDENTIFIER},
+		{Value: "|", Typ: PIPE},
+		{Value: "grep", Typ: IDENTIFIER},
+		{Value: "foo", Typ: IDENTIFIER},
+		{Value: ">", Typ: GREAT},
+		{Value: "outfile", Typ: IDENTIFIER},
 	}
 
 	parser := NewParser(input)
 
 	for _, tok := range tests {
-		if parser.curToken.typ != tok.typ {
-			t.Errorf("Incorrect token. Got=%v, Expected=%v", parser.curToken.typ, IDENTIFIER)
+		if parser.curToken.Typ != tok.Typ {
+			t.Errorf("Incorrect token. Got=%v, Expected=%v", parser.curToken.Typ, IDENTIFIER)
 		}
 
-		if parser.curToken.value != tok.value {
-			t.Errorf("Wrong token value. Got=%v, Expected=ls", parser.curToken.value)
+		if parser.curToken.Value != tok.Value {
+			t.Errorf("Wrong token Value. Got=%v, Expected=ls", parser.curToken.Value)
 		}
 
 		parser.NextToken()

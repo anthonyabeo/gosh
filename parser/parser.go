@@ -18,3 +18,19 @@ func (p *Parser) NextToken() {
 	p.curToken = p.nextToken
 	p.nextToken = p.lex.NextToken()
 }
+
+func (p *Parser) CurToken() Token {
+	return p.curToken
+}
+
+func (p *Parser) CurTokenIs(tt Token) bool {
+	return p.curToken.Typ == tt.Typ
+}
+
+func (p *Parser) NextTokenIs(tt Token) bool {
+	return p.nextToken.Typ == tt.Typ
+}
+
+// func (p *Parser) ParseCommand() CompleteCommand {
+
+// }
