@@ -57,3 +57,20 @@ func TestParseCmd(t *testing.T) {
 		t.Errorf("Wrong second option. Got=%v, Expected=foo", cmd.Args[1])
 	}
 }
+
+func TestParseCommand(t *testing.T) {
+	input := "ls -al foo"
+	p := NewParser(input)
+	cc := p.ParseCommand()
+
+	if len(cc.Commands) != 1 {
+		t.Errorf("Wrong number of commands. Got=%v, Expected=1",
+			len(cc.Commands))
+	}
+
+	if cc.Commands[0].Path != "ls" {
+		t.Errorf("Wrong path of first command. Got=%v, Expected=ls",
+			cc.Commands[0].Path)
+	}
+
+}
