@@ -38,7 +38,7 @@ func (p *Parser) ParseCommand() executor.CompleteCommand {
 
 	for p.curToken.Typ != EOF {
 		cmd, err := p.parseCmd()
-		if err != nil {
+		if err == nil {
 			cc.Commands = append(cc.Commands, cmd)
 		}
 
