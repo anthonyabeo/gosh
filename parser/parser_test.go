@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"os/exec"
 	"testing"
 )
 
@@ -41,19 +42,24 @@ func TestParseCmd(t *testing.T) {
 		t.Errorf("Cmd parse failed. Expected err to be nil.")
 	}
 
-	if cmd.Path != "ls" {
-		t.Errorf("Wrong command path. Got=%v, Expected=ls", cmd.Path)
+	lsBin, lookErr := exec.LookPath("ls")
+	if lookErr != nil {
+		t.Error("Lookup for ls binary failed")
 	}
 
-	if len(cmd.Args) != 2 {
-		t.Errorf("Wrong number of arguments and options. Got=%v, Expected=2", len(cmd.Args))
+	if cmd.Path != lsBin {
+		t.Errorf("Wrong command path. Got=%v, Expected=%v", cmd.Path, lsBin)
 	}
 
-	if cmd.Args[0] != "-al" {
+	if len(cmd.Args) != 3 {
+		t.Errorf("Wrong number of arguments and options. Got=%v, Expected=3", len(cmd.Args))
+	}
+
+	if cmd.Args[1] != "-al" {
 		t.Errorf("Wrong first option. Got=%v, Expected=-al", cmd.Args[0])
 	}
 
-	if cmd.Args[1] != "foo" {
+	if cmd.Args[2] != "foo" {
 		t.Errorf("Wrong second option. Got=%v, Expected=foo", cmd.Args[1])
 	}
 }
@@ -68,9 +74,14 @@ func TestParseCommand(t *testing.T) {
 			len(cc.Commands))
 	}
 
-	if cc.Commands[0].Path != "ls" {
-		t.Errorf("Wrong path of first command. Got=%v, Expected=ls",
-			cc.Commands[0].Path)
+	lsBin, lookErr := exec.LookPath("ls")
+	if lookErr != nil {
+		t.Error("Lookup for ls binary failed")
+	}
+
+	if cc.Commands[0].Path != lsBin {
+		t.Errorf("Wrong path of first command. Got=%v, Expected=%v",
+			cc.Commands[0].Path, lsBin)
 	}
 
 }
