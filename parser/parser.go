@@ -34,7 +34,7 @@ func (p *Parser) NextTokenIs(tt Token) bool {
 }
 
 func (p *Parser) ParseCommand() executor.CompleteCommand {
-	cc := executor.CompleteCommand{}
+	cc := executor.NewCompleteCommand()
 
 	for p.curToken.Typ != EOF {
 		cmd, err := p.parseCmd()
@@ -48,14 +48,17 @@ func (p *Parser) ParseCommand() executor.CompleteCommand {
 	return cc
 }
 
-func (p *Parser) parseCmd() (exec.Cmd, error) {
-	cmd := exec.Cmd{Path: p.curToken.Value}
+func (p *Parser) parseCmd() (*exec.Cmd, error) {
+	var args []string
+	path := p.curToken.Value
+
 	p.NextToken()
 
 	for p.curToken.Typ == IDENTIFIER || p.curToken.Typ == OPTION {
-		cmd.Args = append(cmd.Args, p.curToken.Value)
+		args = append(args, p.curToken.Value)
 		p.NextToken()
 	}
+	cmd := exec.Command(path, args...)
 
 	return cmd, nil
 }
