@@ -111,5 +111,6 @@ func (lex *Lexer) curCharIsLetter() bool {
 		lex.curChar == '_' ||
 		lex.curChar == '-' ||
 		lex.curChar == '*' ||
-		lex.curChar == '.'
+		lex.curChar == '.' ||
+		lex.curChar == '/'
 }
