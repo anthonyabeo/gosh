@@ -33,7 +33,7 @@ func (p *Parser) NextTokenIs(tt Token) bool {
 	return p.nextToken.Typ == tt.Typ
 }
 
-func (p *Parser) ParseCommand() executor.CompleteCommand {
+func (p *Parser) ParseCommand() *executor.CompleteCommand {
 	cc := executor.NewCompleteCommand()
 
 	for p.curToken.Typ != EOF {
