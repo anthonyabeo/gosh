@@ -1,6 +1,10 @@
 # GoSH
 A simple implementation of the UNIX shell.
 
+## Requirements
+You need Golang version 1.16 installed on your system. You can install one for your platform [here](https://golang.org/dl/).
+
+
 ## Testing
 ```
 $ go test -v ./parser -cover -coverprofile=coverage.out
