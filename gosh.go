@@ -34,7 +34,7 @@ func main() {
 		cwd = pwd
 	}
 
-	prompt := fmt.Sprintf("[%s@%s]:%s$ ", username, hostname, cwd)
+	prompt := fmt.Sprintf("[%s@%s:%s]$ ", username, hostname, cwd)
 
 	scanner := bufio.NewScanner(os.Stdin)
 
