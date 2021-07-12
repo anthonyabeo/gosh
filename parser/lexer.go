@@ -73,6 +73,7 @@ func (lex *Lexer) NextToken() Token {
 
 func (lex *Lexer) nextCharIs(chr byte) bool {
 	if lex.nextCharPos >= len(lex.input) {
+		// TODO - Test this branch path
 		return false
 	}
 

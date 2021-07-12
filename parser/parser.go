@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"log"
 	"os/exec"
 
 	"github.com/anthonyabeo/gosh/executor"
@@ -25,21 +26,38 @@ func (p *Parser) NextToken() {
 	p.nextToken = p.lex.NextToken()
 }
 
-func (p *Parser) CurTokenIs(tt Token) bool {
-	return p.curToken.Typ == tt.Typ
+func (p *Parser) CurTokenTypeIs(tt TokenType) bool {
+	return p.curToken.Typ == tt
 }
 
-func (p *Parser) NextTokenIs(tt Token) bool {
-	return p.nextToken.Typ == tt.Typ
+func (p *Parser) NextTokenTypeIs(tt TokenType) bool {
+	return p.nextToken.Typ == tt
 }
 
 func (p *Parser) ParseCommand() *executor.CompleteCommand {
 	cc := executor.NewCompleteCommand()
+	pipe := false
 
-	for p.curToken.Typ != EOF {
+	for !p.CurTokenTypeIs(EOF) {
+		if p.CurTokenTypeIs(PIPE) {
+			pipe = true
+			p.NextToken()
+		}
+
 		cmd, err := p.parseCmd()
 		if err == nil {
+			if pipe {
+				prevCmd := cc.Commands[len(cc.Commands)-1]
+				if prevCmdStdout, err := prevCmd.StdoutPipe(); err != nil {
+					log.Fatal(err)
+				} else {
+					cmd.Stdin = prevCmdStdout
+					pipe = false
+				}
+			}
+
 			cc.Commands = append(cc.Commands, cmd)
+			cc.NumCmds += 1
 		}
 
 		p.NextToken()
@@ -49,14 +67,14 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 }
 
 func (p *Parser) parseCmd() (*exec.Cmd, error) {
+	// TODO Implement error cases.
 	var args []string
 	path := p.curToken.Value
 
-	p.NextToken()
-
-	for p.curToken.Typ == IDENTIFIER || p.curToken.Typ == OPTION {
-		args = append(args, p.curToken.Value)
+	for p.NextTokenTypeIs(IDENTIFIER) || p.NextTokenTypeIs(OPTION) {
 		p.NextToken()
+
+		args = append(args, p.curToken.Value)
 	}
 	cmd := exec.Command(path, args...)
 
