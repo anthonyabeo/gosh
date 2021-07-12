@@ -1,9 +1,13 @@
 # GoSH
-A simple implementation of the UNIX shell.
+A simple implementation of a [POSIX](https://en.wikipedia.org/wiki/POSIX) complaint UNIX shell.
 
 ## Requirements
 You need Golang version 1.16 installed on your system. You can install one for your platform [here](https://golang.org/dl/).
 
+```
+$ go version
+go version go1.16.5 darwin/amd64
+```
 
 ## Testing
 ```
