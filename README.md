@@ -9,6 +9,15 @@ $ go version
 go version go1.16.5 darwin/amd64
 ```
 
+## A Simple Example
+```
+$ go run .
+
+[username@host:/path/to/current/dir] $ ls -al | grep git
+drwxr-xr-x  12 user  group   384  9 Jul 11:05 .git
+-rw-r--r--   1 user  group    21  2 Jul 09:00 .gitignore
+```
+
 ## Testing
 ```
 $ go test -v ./parser -cover -coverprofile=coverage.out
