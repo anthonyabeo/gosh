@@ -44,9 +44,13 @@ func main() {
 		scanner.Scan()
 		text := scanner.Text()
 
-		p := parser.NewParser(text)
-		cc := p.ParseCommand()
+		if len(text) > 0 {
+			p := parser.NewParser(text)
+			cc := p.ParseCommand()
 
-		cc.Execute()
+			cc.Execute()
+		} else {
+			fmt.Fprint(os.Stdout, "\n")
+		}
 	}
 }

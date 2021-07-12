@@ -49,5 +49,6 @@ func (cc *CompleteCommand) Execute() {
 		cc.Commands[i].Wait()
 	}
 
+	buf.WriteByte('\n')
 	io.Copy(os.Stdout, &buf)
 }
