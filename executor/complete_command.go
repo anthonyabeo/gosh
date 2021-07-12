@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -8,33 +9,45 @@ import (
 )
 
 type CompleteCommand struct {
-	Stdin        io.Reader
-	Stdout       io.Writer
-	Stderr       io.Writer
+	Stdin        bytes.Buffer
+	Stdout       bytes.Buffer
+	Stderr       bytes.Buffer
 	Background   bool
 	Commands     []*exec.Cmd
-	NumAvailCmds uint
-	NumCmds      uint
+	NumAvailCmds int
+	NumCmds      int
 }
 
 func NewCompleteCommand() *CompleteCommand {
 	return &CompleteCommand{
-		Stdin:      os.Stdin,
-		Stdout:     os.Stdout,
-		Stderr:     os.Stderr,
 		Background: false,
 	}
 }
 
 func (cc *CompleteCommand) Execute() {
-	for _, cmd := range cc.Commands {
-		cmdOut, err := cmd.Output()
+	var buf bytes.Buffer
+	cc.Commands[len(cc.Commands)-1].Stdout = &buf
 
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
-			os.Exit(1)
+	for i := cc.NumCmds - 1; i >= 0; i -= 1 {
+		cmd := cc.Commands[i]
+		if i != 0 {
+			err := cmd.Start()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
+				os.Exit(1)
+			}
+		} else {
+			err := cmd.Run()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
+				os.Exit(1)
+			}
 		}
-
-		fmt.Fprintf(os.Stdout, "%s\n", string(cmdOut))
 	}
+
+	for i := cc.NumCmds - 1; i > 0; i -= 1 {
+		cc.Commands[i].Wait()
+	}
+
+	io.Copy(os.Stdout, &buf)
 }
