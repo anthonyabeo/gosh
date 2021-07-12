@@ -10,6 +10,9 @@ import (
 )
 
 func main() {
+	// TODO - Implement Shell builtin commands
+	// TODO - Wildcards and Shell expansions
+	// TODO - POSIX Compliant
 	var username, hostname, cwd string
 	var u user.User
 
