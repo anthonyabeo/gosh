@@ -85,3 +85,52 @@ func TestParseCommand(t *testing.T) {
 	}
 
 }
+
+func TestPipedCommand(t *testing.T) {
+	input := "ls -al | grep git"
+
+	p := NewParser(input)
+	cc := p.ParseCommand()
+
+	// /bin/ls Subcommand Tests
+	lsBin, lookErr := exec.LookPath("ls")
+	if lookErr != nil {
+		t.Error("Lookup for ls binary failed")
+	}
+
+	if cc.Commands[0].Path != lsBin {
+		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
+			cc.Commands[0].Path, lsBin)
+	}
+
+	if len(cc.Commands[0].Args) != 2 {
+		t.Errorf("Wrong number of args. Got=%v, Expected=2",
+			len(cc.Commands[0].Args))
+	}
+
+	// /usr/bin/grep Subcommand Tests
+	grepBin, grepErr := exec.LookPath("grep")
+	if grepErr != nil {
+		t.Error("Lookup for grep binary failed")
+	}
+
+	if cc.Commands[1].Path != grepBin {
+		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
+			cc.Commands[1].Path, grepBin)
+	}
+
+	if len(cc.Commands[1].Args) != 2 {
+		t.Errorf("Wrong number of args. Got=%v, Expected=2",
+			len(cc.Commands[1].Args))
+	}
+
+	// Full Command Tests
+	if cc.NumCmds != 2 {
+		t.Errorf("wrong number of subcommand. Got=%v, Expected=2", cc.NumCmds)
+	}
+
+	if cc.Background {
+		t.Errorf("Background execution not specfied. Got=%v, Expected=false",
+			cc.Background)
+	}
+}
