@@ -52,6 +52,14 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 			continue
 		}
 
+		if p.CurTokenTypeIs(LESS) {
+			p.NextToken()
+			cc.StdinFilename = p.curToken.Value
+			p.NextToken()
+
+			continue
+		}
+
 		cmd, err := p.parseCmd()
 		if err == nil {
 			if pipe {
