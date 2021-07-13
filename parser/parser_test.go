@@ -3,6 +3,8 @@ package parser
 import (
 	"os/exec"
 	"testing"
+
+	"github.com/anthonyabeo/gosh/executor"
 )
 
 func TestParser(t *testing.T) {
@@ -92,39 +94,8 @@ func TestPipedCommand(t *testing.T) {
 	p := NewParser(input)
 	cc := p.ParseCommand()
 
-	// /bin/ls Subcommand Tests
-	lsBin, lookErr := exec.LookPath("ls")
-	if lookErr != nil {
-		t.Error("Lookup for ls binary failed")
-	}
+	checkSubCommands([]string{"ls", "grep"}, []int{2, 2}, cc, t)
 
-	if cc.Commands[0].Path != lsBin {
-		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
-			cc.Commands[0].Path, lsBin)
-	}
-
-	if len(cc.Commands[0].Args) != 2 {
-		t.Errorf("Wrong number of args. Got=%v, Expected=2",
-			len(cc.Commands[0].Args))
-	}
-
-	// /usr/bin/grep Subcommand Tests
-	grepBin, grepErr := exec.LookPath("grep")
-	if grepErr != nil {
-		t.Error("Lookup for grep binary failed")
-	}
-
-	if cc.Commands[1].Path != grepBin {
-		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
-			cc.Commands[1].Path, grepBin)
-	}
-
-	if len(cc.Commands[1].Args) != 2 {
-		t.Errorf("Wrong number of args. Got=%v, Expected=2",
-			len(cc.Commands[1].Args))
-	}
-
-	// Full Command Tests
 	if cc.NumCmds != 2 {
 		t.Errorf("wrong number of subcommand. Got=%v, Expected=2", cc.NumCmds)
 	}
@@ -140,54 +111,8 @@ func TestOutputRedirection(t *testing.T) {
 	p := NewParser(input)
 	cc := p.ParseCommand()
 
-	// /bin/ls Subcommand Tests
-	lsBin, lookErr := exec.LookPath("ls")
-	if lookErr != nil {
-		t.Error("Lookup for ls binary failed")
-	}
+	checkSubCommands([]string{"ls", "grep", "wc"}, []int{2, 2, 1}, cc, t)
 
-	if cc.Commands[0].Path != lsBin {
-		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
-			cc.Commands[0].Path, lsBin)
-	}
-
-	if len(cc.Commands[0].Args) != 2 {
-		t.Errorf("Wrong number of args. Got=%v, Expected=2",
-			len(cc.Commands[0].Args))
-	}
-
-	// /usr/bin/grep Subcommand Tests
-	grepBin, grepErr := exec.LookPath("grep")
-	if grepErr != nil {
-		t.Error("Lookup for grep binary failed")
-	}
-
-	if cc.Commands[1].Path != grepBin {
-		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
-			cc.Commands[1].Path, grepBin)
-	}
-
-	if len(cc.Commands[1].Args) != 2 {
-		t.Errorf("Wrong number of args. Got=%v, Expected=2",
-			len(cc.Commands[1].Args))
-	}
-
-	wcBin, wcErr := exec.LookPath("wc")
-	if wcErr != nil {
-		t.Error("Lookup for wc binary failed")
-	}
-
-	if cc.Commands[2].Path != wcBin {
-		t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
-			cc.Commands[2].Path, wcBin)
-	}
-
-	if len(cc.Commands[2].Args) != 1 {
-		t.Errorf("Wrong number of args. Got=%v, Expected=1",
-			len(cc.Commands[2].Args))
-	}
-
-	// Full Command Tests
 	if cc.NumCmds != 3 {
 		t.Errorf("wrong number of subcommand. Got=%v, Expected=3", cc.NumCmds)
 	}
@@ -200,5 +125,51 @@ func TestOutputRedirection(t *testing.T) {
 	if cc.StdoutFilename != "outfile.txt" {
 		t.Errorf("Wrong output file name. Got=%v, Expected=outfile.txt",
 			cc.StdoutFilename)
+	}
+}
+
+func TestInputRedirection(t *testing.T) {
+	input := "grep git | wc > outfile.txt < infile.txt"
+	p := NewParser(input)
+	cc := p.ParseCommand()
+
+	checkSubCommands([]string{"grep", "wc"}, []int{2, 1}, cc, t)
+
+	if cc.NumCmds != 2 {
+		t.Errorf("wrong number of subcommand. Got=%v, Expected=2", cc.NumCmds)
+	}
+
+	if cc.Background {
+		t.Errorf("Background execution not specfied. Got=%v, Expected=false",
+			cc.Background)
+	}
+
+	if cc.StdoutFilename != "outfile.txt" {
+		t.Errorf("Wrong output file name. Got=%v, Expected=outfile.txt",
+			cc.StdoutFilename)
+	}
+
+	if cc.StdinFilename != "infile.txt" {
+		t.Errorf("Wrong inpt file name. Got=%v, Expected=outfile.txt",
+			cc.StdinFilename)
+	}
+}
+
+func checkSubCommands(commands []string, numArgs []int, cc *executor.CompleteCommand, t *testing.T) {
+	for i := 0; i < len(cc.Commands); i++ {
+		cmdBin, grepErr := exec.LookPath(commands[i])
+		if grepErr != nil {
+			t.Error("Lookup for grep binary failed")
+		}
+
+		if cc.Commands[i].Path != cmdBin {
+			t.Errorf("Wrong path for first subcommand. Got=%v, Expected=%v",
+				cc.Commands[i].Path, commands[i])
+		}
+
+		if len(cc.Commands[i].Args) != numArgs[i] {
+			t.Errorf("Wrong number of args. Got=%v, Expected=%v",
+				len(cc.Commands[i].Args), numArgs[1])
+		}
 	}
 }
