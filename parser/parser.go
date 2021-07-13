@@ -52,6 +52,15 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 			continue
 		}
 
+		if p.CurTokenTypeIs(GREATGREATER) {
+			p.NextToken()
+			cc.StdoutFilename = p.curToken.Value
+			cc.AppendOutput = true
+			p.NextToken()
+
+			continue
+		}
+
 		if p.CurTokenTypeIs(LESS) {
 			p.NextToken()
 			cc.StdinFilename = p.curToken.Value

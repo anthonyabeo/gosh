@@ -15,7 +15,7 @@ type CompleteCommand struct {
 	Stdin                         bytes.Buffer
 	Stdout                        bytes.Buffer
 	Stderr                        bytes.Buffer
-	Background                    bool
+	Background, AppendOutput      bool
 	Commands                      []*exec.Cmd
 	NumAvailCmds                  int
 	NumCmds                       int
@@ -68,14 +68,19 @@ func (cc *CompleteCommand) Execute() {
 		cc.Commands[i].Wait()
 	}
 
-	buf.WriteByte('\n')
-
 	if len(cc.StdoutFilename) > 0 {
-		outfile, err := os.Create(cc.StdoutFilename)
+		mode := os.O_CREATE | os.O_WRONLY
+
+		if cc.AppendOutput {
+			mode = os.O_APPEND | os.O_CREATE | os.O_WRONLY
+		}
+
+		outfile, err := os.OpenFile(cc.StdoutFilename, mode, 0644)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
 			os.Exit(1)
 		}
+		defer outfile.Close()
 
 		writer := bufio.NewWriter(outfile)
 		writer.WriteString(buf.String())

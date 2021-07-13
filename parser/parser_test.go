@@ -155,6 +155,37 @@ func TestInputRedirection(t *testing.T) {
 	}
 }
 
+func TestAppendOutputRedirection(t *testing.T) {
+	input := "grep git | wc >> outfile.txt < infile.txt"
+	p := NewParser(input)
+	cc := p.ParseCommand()
+
+	checkSubCommands([]string{"grep", "wc"}, []int{2, 1}, cc, t)
+
+	if cc.NumCmds != 2 {
+		t.Errorf("wrong number of subcommand. Got=%v, Expected=2", cc.NumCmds)
+	}
+
+	if cc.Background {
+		t.Errorf("Background execution not specfied. Got=%v, Expected=false",
+			cc.Background)
+	}
+
+	if cc.StdoutFilename != "outfile.txt" {
+		t.Errorf("Wrong output file name. Got=%v, Expected=outfile.txt",
+			cc.StdoutFilename)
+	}
+
+	if cc.StdinFilename != "infile.txt" {
+		t.Errorf("Wrong inpt file name. Got=%v, Expected=outfile.txt",
+			cc.StdinFilename)
+	}
+
+	if !cc.AppendOutput {
+		t.Error("Append output Redirection expected")
+	}
+}
+
 func checkSubCommands(commands []string, numArgs []int, cc *executor.CompleteCommand, t *testing.T) {
 	for i := 0; i < len(cc.Commands); i++ {
 		cmdBin, grepErr := exec.LookPath(commands[i])
