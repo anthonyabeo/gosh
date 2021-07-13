@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -9,13 +10,14 @@ import (
 )
 
 type CompleteCommand struct {
-	Stdin        bytes.Buffer
-	Stdout       bytes.Buffer
-	Stderr       bytes.Buffer
-	Background   bool
-	Commands     []*exec.Cmd
-	NumAvailCmds int
-	NumCmds      int
+	Stdin                         bytes.Buffer
+	Stdout                        bytes.Buffer
+	Stderr                        bytes.Buffer
+	Background                    bool
+	Commands                      []*exec.Cmd
+	NumAvailCmds                  int
+	NumCmds                       int
+	StdoutFilename, StdinFilename string
 }
 
 func NewCompleteCommand() *CompleteCommand {
@@ -30,18 +32,17 @@ func (cc *CompleteCommand) Execute() {
 
 	for i := cc.NumCmds - 1; i >= 0; i -= 1 {
 		cmd := cc.Commands[i]
-		if i != 0 {
-			err := cmd.Start()
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
-				os.Exit(1)
-			}
+		var err error
+
+		if i > 0 {
+			err = cmd.Start()
 		} else {
-			err := cmd.Run()
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
-				os.Exit(1)
-			}
+			err = cmd.Run()
+		}
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
+			os.Exit(1)
 		}
 	}
 
@@ -50,5 +51,20 @@ func (cc *CompleteCommand) Execute() {
 	}
 
 	buf.WriteByte('\n')
-	io.Copy(os.Stdout, &buf)
+
+	if len(cc.StdoutFilename) > 0 {
+		outfile, err := os.Create(cc.StdoutFilename)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "\nError - %v\n", err)
+			os.Exit(1)
+		}
+
+		writer := bufio.NewWriter(outfile)
+		writer.WriteString(buf.String())
+		writer.Flush()
+
+		fmt.Fprint(os.Stdout, "\n")
+	} else {
+		io.Copy(os.Stdout, &buf)
+	}
 }
