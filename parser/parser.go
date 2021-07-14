@@ -78,6 +78,15 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 			continue
 		}
 
+		if p.CurTokenTypeIs(AMPERSANDGREATGREAT) {
+			p.NextToken()
+			cc.StdoutFilename = p.curToken.Value
+			cc.MergeOutErr = true
+			cc.AppendOutput = true
+			p.NextToken()
+
+			continue
+		}
 		cmd, err := p.parseCmd()
 		if err == nil {
 			if pipe {
