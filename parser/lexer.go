@@ -33,6 +33,13 @@ func (lex *Lexer) NextToken() Token {
 			token.Value = "&>"
 
 			lex.readChar()
+
+			if lex.nextCharIs('>') {
+				token.Typ = AMPERSANDGREATGREAT
+				token.Value = "&>>"
+
+				lex.readChar()
+			}
 		} else {
 			token.Typ = AMPERSAND
 			token.Value = "&"
