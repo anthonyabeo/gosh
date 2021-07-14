@@ -5,14 +5,14 @@ import (
 )
 
 func TestTokens(t *testing.T) {
-	input := "& | > >> < >& \n -a grep cat find"
+	input := "& | > >> < &> \n -a grep cat find"
 	tests := []Token{
 		{Value: "&", Typ: AMPERSAND},
 		{Value: "|", Typ: PIPE},
 		{Value: ">", Typ: GREAT},
 		{Value: ">>", Typ: GREATGREATER},
 		{Value: "<", Typ: LESS},
-		{Value: ">&", Typ: GREATAMPERSAND},
+		{Value: "&>", Typ: AMPERSANDGREAT},
 		{Value: "\n", Typ: NEWLINE},
 		{Value: "-a", Typ: OPTION},
 		{Value: "grep", Typ: IDENTIFIER},

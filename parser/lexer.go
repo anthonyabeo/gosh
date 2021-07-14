@@ -28,8 +28,15 @@ func (lex *Lexer) NextToken() Token {
 
 	switch lex.curChar {
 	case '&':
-		token.Typ = AMPERSAND
-		token.Value = "&"
+		if lex.nextCharIs('>') {
+			token.Typ = AMPERSANDGREAT
+			token.Value = "&>"
+
+			lex.readChar()
+		} else {
+			token.Typ = AMPERSAND
+			token.Value = "&"
+		}
 	case '|':
 		token.Typ = PIPE
 		token.Value = "|"
@@ -37,11 +44,6 @@ func (lex *Lexer) NextToken() Token {
 		if lex.nextCharIs('>') {
 			token.Typ = GREATGREATER
 			token.Value = ">>"
-
-			lex.readChar()
-		} else if lex.nextCharIs('&') {
-			token.Typ = GREATAMPERSAND
-			token.Value = ">&"
 
 			lex.readChar()
 		} else {

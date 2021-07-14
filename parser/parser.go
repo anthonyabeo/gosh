@@ -69,7 +69,7 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 			continue
 		}
 
-		if p.CurTokenTypeIs(GREATAMPERSAND) {
+		if p.CurTokenTypeIs(AMPERSANDGREAT) {
 			p.NextToken()
 			cc.StdoutFilename = p.curToken.Value
 			cc.MergeOutErr = true
