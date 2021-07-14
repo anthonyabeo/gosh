@@ -69,6 +69,15 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 			continue
 		}
 
+		if p.CurTokenTypeIs(GREATAMPERSAND) {
+			p.NextToken()
+			cc.StdoutFilename = p.curToken.Value
+			cc.MergeOutErr = true
+			p.NextToken()
+
+			continue
+		}
+
 		cmd, err := p.parseCmd()
 		if err == nil {
 			if pipe {

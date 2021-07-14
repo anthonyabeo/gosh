@@ -12,14 +12,12 @@ import (
 )
 
 type CompleteCommand struct {
-	Stdin                         bytes.Buffer
-	Stdout                        bytes.Buffer
-	Stderr                        bytes.Buffer
-	Background, AppendOutput      bool
-	Commands                      []*exec.Cmd
-	NumAvailCmds                  int
-	NumCmds                       int
-	StdoutFilename, StdinFilename string
+	Stdin, Stdout, Stderr                 bytes.Buffer
+	Background, AppendOutput, MergeOutErr bool
+	Commands                              []*exec.Cmd
+	NumAvailCmds                          int
+	NumCmds                               int
+	StdoutFilename, StdinFilename         string
 }
 
 func NewCompleteCommand() *CompleteCommand {
@@ -29,7 +27,7 @@ func NewCompleteCommand() *CompleteCommand {
 }
 
 func (cc *CompleteCommand) Execute() {
-	var buf, inputBuf bytes.Buffer
+	var buf, inputBuf, errBuf bytes.Buffer
 
 	if len(cc.StdinFilename) > 0 {
 		fileContent, readErr := ioutil.ReadFile(cc.StdinFilename)
@@ -47,6 +45,7 @@ func (cc *CompleteCommand) Execute() {
 	}
 
 	cc.Commands[len(cc.Commands)-1].Stdout = &buf
+	cc.Commands[len(cc.Commands)-1].Stderr = &errBuf
 
 	for i := cc.NumCmds - 1; i >= 0; i -= 1 {
 		cmd := cc.Commands[i]
@@ -69,7 +68,7 @@ func (cc *CompleteCommand) Execute() {
 	}
 
 	if len(cc.StdoutFilename) > 0 {
-		mode := os.O_CREATE | os.O_WRONLY
+		mode := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
 
 		if cc.AppendOutput {
 			mode = os.O_APPEND | os.O_CREATE | os.O_WRONLY
@@ -84,6 +83,9 @@ func (cc *CompleteCommand) Execute() {
 
 		writer := bufio.NewWriter(outfile)
 		writer.WriteString(buf.String())
+		if cc.MergeOutErr {
+			writer.WriteString(errBuf.String())
+		}
 		writer.Flush()
 
 		fmt.Fprint(os.Stdout, "\n")
