@@ -23,12 +23,12 @@ func TestParser(t *testing.T) {
 	parser := NewParser(input)
 
 	for _, tok := range tests {
-		if parser.curToken.Typ != tok.Typ {
-			t.Errorf("Incorrect token. Got=%v, Expected=%v", parser.curToken.Typ, IDENTIFIER)
+		if parser.CurToken.Typ != tok.Typ {
+			t.Errorf("Incorrect token. Got=%v, Expected=%v", parser.CurToken.Typ, IDENTIFIER)
 		}
 
-		if parser.curToken.Value != tok.Value {
-			t.Errorf("Wrong token Value. Got=%v, Expected=ls", parser.curToken.Value)
+		if parser.CurToken.Value != tok.Value {
+			t.Errorf("Wrong token Value. Got=%v, Expected=ls", parser.CurToken.Value)
 		}
 
 		parser.NextToken()

@@ -9,7 +9,7 @@ import (
 
 type Parser struct {
 	lex       Lexer
-	curToken  Token
+	CurToken  Token
 	nextToken Token
 }
 
@@ -22,12 +22,12 @@ func NewParser(input string) Parser {
 }
 
 func (p *Parser) NextToken() {
-	p.curToken = p.nextToken
+	p.CurToken = p.nextToken
 	p.nextToken = p.lex.NextToken()
 }
 
 func (p *Parser) CurTokenTypeIs(tt TokenType) bool {
-	return p.curToken.Typ == tt
+	return p.CurToken.Typ == tt
 }
 
 func (p *Parser) NextTokenTypeIs(tt TokenType) bool {
@@ -46,7 +46,7 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 
 		if p.CurTokenTypeIs(GREAT) {
 			p.NextToken()
-			cc.StdoutFilename = p.curToken.Value
+			cc.StdoutFilename = p.CurToken.Value
 			p.NextToken()
 
 			continue
@@ -54,7 +54,7 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 
 		if p.CurTokenTypeIs(GREATGREATER) {
 			p.NextToken()
-			cc.StdoutFilename = p.curToken.Value
+			cc.StdoutFilename = p.CurToken.Value
 			cc.AppendOutput = true
 			p.NextToken()
 
@@ -63,7 +63,7 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 
 		if p.CurTokenTypeIs(LESS) {
 			p.NextToken()
-			cc.StdinFilename = p.curToken.Value
+			cc.StdinFilename = p.CurToken.Value
 			p.NextToken()
 
 			continue
@@ -71,7 +71,7 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 
 		if p.CurTokenTypeIs(AMPERSANDGREAT) {
 			p.NextToken()
-			cc.StdoutFilename = p.curToken.Value
+			cc.StdoutFilename = p.CurToken.Value
 			cc.MergeOutErr = true
 			p.NextToken()
 
@@ -80,13 +80,14 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 
 		if p.CurTokenTypeIs(AMPERSANDGREATGREAT) {
 			p.NextToken()
-			cc.StdoutFilename = p.curToken.Value
+			cc.StdoutFilename = p.CurToken.Value
 			cc.MergeOutErr = true
 			cc.AppendOutput = true
 			p.NextToken()
 
 			continue
 		}
+
 		cmd, err := p.parseCmd()
 		if err == nil {
 			if pipe {
@@ -112,12 +113,12 @@ func (p *Parser) ParseCommand() *executor.CompleteCommand {
 func (p *Parser) parseCmd() (*exec.Cmd, error) {
 	// TODO Implement error cases.
 	var args []string
-	path := p.curToken.Value
+	path := p.CurToken.Value
 
 	for p.NextTokenTypeIs(IDENTIFIER) || p.NextTokenTypeIs(OPTION) {
 		p.NextToken()
 
-		args = append(args, p.curToken.Value)
+		args = append(args, p.CurToken.Value)
 	}
 	cmd := exec.Command(path, args...)
 
