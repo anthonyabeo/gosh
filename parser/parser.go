@@ -8,9 +8,9 @@ import (
 )
 
 type Parser struct {
-	lex       Lexer
-	CurToken  Token
-	nextToken Token
+	lex      Lexer
+	CurToken Token
+	NxtToken Token
 }
 
 func NewParser(input string) Parser {
@@ -22,8 +22,8 @@ func NewParser(input string) Parser {
 }
 
 func (p *Parser) NextToken() {
-	p.CurToken = p.nextToken
-	p.nextToken = p.lex.NextToken()
+	p.CurToken = p.NxtToken
+	p.NxtToken = p.lex.NextToken()
 }
 
 func (p *Parser) CurTokenTypeIs(tt TokenType) bool {
@@ -31,7 +31,7 @@ func (p *Parser) CurTokenTypeIs(tt TokenType) bool {
 }
 
 func (p *Parser) NextTokenTypeIs(tt TokenType) bool {
-	return p.nextToken.Typ == tt
+	return p.NxtToken.Typ == tt
 }
 
 func (p *Parser) ParseCommand() *executor.CompleteCommand {
