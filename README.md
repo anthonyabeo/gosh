@@ -29,9 +29,21 @@ $ go test -v ./parser -cover -coverprofile=coverage.out
 --- PASS: TestParseCmd (0.00s)
 === RUN   TestParseCommand
 --- PASS: TestParseCommand (0.00s)
+=== RUN   TestPipedCommand
+--- PASS: TestPipedCommand (0.00s)
+=== RUN   TestOutputRedirection
+--- PASS: TestOutputRedirection (0.00s)
+=== RUN   TestInputRedirection
+--- PASS: TestInputRedirection (0.00s)
+=== RUN   TestAppendOutputRedirection
+--- PASS: TestAppendOutputRedirection (0.00s)
+=== RUN   TestRedirectStdoutStderrToSameFile
+--- PASS: TestRedirectStdoutStderrToSameFile (0.00s)
+=== RUN   TestAppendStdoutStderrToSameFile
+--- PASS: TestAppendStdoutStderrToSameFile (0.00s)
 PASS
-coverage: 94.4% of statements
-ok      github.com/anthonyabeo/gosh/parser      0.760s  coverage: 94.4% of statements
+coverage: 97.4% of statements
+ok      github.com/anthonyabeo/gosh/parser      0.952s  coverage: 97.4% of statements
 
 To see your test coverage in the browser
 $ go tool cover -html=coverage.out
